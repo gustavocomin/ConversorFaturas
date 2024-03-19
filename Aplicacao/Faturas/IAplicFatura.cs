@@ -1,6 +1,6 @@
-﻿using ConversorFaturas.Domain.Faturas;
+﻿using Financeiro.Domain.Faturas;
 
-namespace ConversorFaturas.Aplicacao.Faturas
+namespace Financeiro.Aplicacao.Faturas
 {
     public interface IAplicFatura
     {

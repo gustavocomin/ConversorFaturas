@@ -1,10 +1,16 @@
-﻿using ConversorFaturas.Domain.Faturas;
-using ConversorFaturas.Domain.Faturas.MesAno;
-using ConversorFaturas.Repository.Entities.Faturas;
-using ConversorFaturas.Repository.Entities.Faturas.MesAno;
+﻿using Financeiro.Domain.ContasMensais;
+using Financeiro.Domain.Extratos;
+using Financeiro.Domain.Extratos.MesAno;
+using Financeiro.Domain.Faturas;
+using Financeiro.Domain.Faturas.MesAno;
+using Financeiro.Repository.Entities.ContasMensais;
+using Financeiro.Repository.Entities.Extratos;
+using Financeiro.Repository.Entities.Extratos.MesAno;
+using Financeiro.Repository.Entities.Faturas;
+using Financeiro.Repository.Entities.Faturas.MesAno;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ConversorFaturas.Ioc.Repository
+namespace Financeiro.Ioc.Repository
 {
     public static class RepositoryService
     {
@@ -12,6 +18,11 @@ namespace ConversorFaturas.Ioc.Repository
         {
             services.AddScoped<IRepFatura, RepFatura>();
             services.AddScoped<IRepFaturaMesAno, RepFaturaMesAno>();
+
+            services.AddScoped<IRepContaMensal, RepContaMensal>();
+
+            services.AddScoped<IRepExtrato, RepExtrato>();
+            services.AddScoped<IRepExtratoMesAno, RepExtratoMesAno>();
         }
     }
 }

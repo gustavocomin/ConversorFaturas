@@ -1,8 +1,8 @@
-﻿using ConversorFaturas.Domain.Faturas;
-using ConversorFaturas.Repository.Common;
-using ConversorFaturas.Repository.Configurations.Db;
+﻿using Financeiro.Domain.Faturas;
+using Financeiro.Repository.Common;
+using Financeiro.Repository.Configurations.Db;
 
-namespace ConversorFaturas.Repository.Entities.Faturas
+namespace Financeiro.Repository.Entities.Faturas
 {
     public class RepFatura : RepBase<Fatura>, IRepFatura
     {

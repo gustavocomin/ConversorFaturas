@@ -1,4 +1,4 @@
-﻿namespace ConversorFaturas.Domain.Exceptions.Db
+﻿namespace Financeiro.Domain.Exceptions.Db
 {
     public class DbConnectException : Exception
     {

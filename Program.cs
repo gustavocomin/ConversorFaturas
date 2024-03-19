@@ -1,107 +1,61 @@
-﻿using ConversorFaturas.Aplicacao.Agupador;
-using ConversorFaturas.Aplicacao.Conversor;
-using ConversorFaturas.Aplicacao.Dto;
-using ConversorFaturas.Aplicacao.Faturas;
-using ConversorFaturas.Aplicacao.Faturas.MesAno;
-using ConversorFaturas.Aplicacao.Historico;
-using ConversorFaturas.Aplicacao.Totalizador;
-using ConversorFaturas.Common;
-using ConversorFaturas.Domain.Faturas;
-using ConversorFaturas.Domain.Faturas.MesAno;
-using ConversorFaturas.Ioc;
+﻿using Financeiro.Aplicacao.ContasMensais;
+using Financeiro.Aplicacao.Conversor;
+using Financeiro.Aplicacao.OrquestradorPlanilhas;
+using Financeiro.Domain.Faturas.MesAno;
+using Financeiro.Ioc;
 using Microsoft.Extensions.DependencyInjection;
 using OfficeOpenXml;
 
-namespace ConversorFaturas
+namespace Financeiro
 {
     public class Program
     {
-        private readonly IAplicAgrupadorFaturas _aplicAgrupadorFaturas;
-        private readonly IAplicPlanilhaHistorico _aplicPlanilhaHistorico;
-        private readonly IAplicPlanilhaTotalizador _aplicPlanilhaTotalizador;
-        private readonly IAplicConversor _aplicConversor;
-        private readonly IAplicFatura _aplicFatura;
-        private readonly IAplicFaturaMesAno _aplicFaturaMesAno;
+        private readonly IAplicContaMensal _aplicContaMensal;
+        private readonly IAplicOrquestradorPlanilhas _aplicOrquestradorPlanilhas;
+        private readonly IAplicOrquestradorConversor _aplicOrquestradorConversor;
 
-        public Program(IAplicAgrupadorFaturas aplicAgrupadorFaturas,
-                          IAplicPlanilhaHistorico aplicPlanilhaHistorico,
-                          IAplicPlanilhaTotalizador aplicPlanilhaTotalizador,
-                          IAplicConversor aplicConversor,
-                          IAplicFatura aplicFatura,
-                          IAplicFaturaMesAno aplicFaturaMesAno)
+        public Program(IAplicContaMensal aplicContaMensal,
+                       IAplicOrquestradorPlanilhas aplicOrquestradorPlanilhas,
+                       IAplicOrquestradorConversor aplicOrquestradorConversor)
         {
-            _aplicAgrupadorFaturas = aplicAgrupadorFaturas ?? throw new ArgumentNullException(nameof(aplicAgrupadorFaturas));
-            _aplicPlanilhaHistorico = aplicPlanilhaHistorico ?? throw new ArgumentNullException(nameof(aplicPlanilhaHistorico));
-            _aplicPlanilhaTotalizador = aplicPlanilhaTotalizador ?? throw new ArgumentNullException(nameof(aplicPlanilhaTotalizador));
-            _aplicConversor = aplicConversor ?? throw new ArgumentNullException(nameof(aplicConversor));
-            _aplicFatura = aplicFatura ?? throw new ArgumentNullException(nameof(aplicFatura));
-            _aplicFaturaMesAno = aplicFaturaMesAno ?? throw new ArgumentNullException(nameof(aplicFaturaMesAno));
+            _aplicContaMensal = aplicContaMensal ?? throw new ArgumentNullException(nameof(aplicContaMensal));
+            _aplicOrquestradorPlanilhas = aplicOrquestradorPlanilhas ?? throw new ArgumentNullException(nameof(aplicOrquestradorPlanilhas));
+            _aplicOrquestradorConversor = aplicOrquestradorConversor ?? throw new ArgumentNullException(nameof(aplicOrquestradorConversor));
         }
 
         public static async Task Main()
         {
-            var services = new ServiceCollection();
+            ServiceCollection services = new();
             services.ConfigureServices();
             Services.TestarConexao();
 
             using ServiceProvider serviceProvider = services.BuildServiceProvider();
-            using var scope = serviceProvider.CreateScope();
-            var program = scope.ServiceProvider.GetRequiredService<Program>();
+            using IServiceScope scope = serviceProvider.CreateScope();
+            Program program = scope.ServiceProvider.GetRequiredService<Program>();
             await program.RunAsync();
         }
 
         public async Task RunAsync()
         {
-            List<Fatura> novasFaturas = ConverterDados();
-
-            List<FaturaMesAno> faturasMesAno = await SalvarFaturas(novasFaturas);
-
-            await CriarPlanilhas(faturasMesAno);
-        }
-
-        private List<Fatura> ConverterDados()
-        {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            string pastaDeOrigem = @"C:\Users\Gustavo Fagundes\Downloads\teste";
-            string destino = Path.Combine(pastaDeOrigem, "Convertidos");
+            string origem = @"C:\Users\Gustavo Fagundes\Downloads\Financeiro\Faturas";
+            string destino = Path.Combine(origem, "Convertidos");
 
-            List<string> arquivosCsv = Directory.GetFiles(pastaDeOrigem, "*.csv")
-                                                .OrderByDescending(x => x)
-                                                .ToList();
+            List<FaturaMesAno> faturas = await ConverterDados(destino);
+            await _aplicContaMensal.Teste();
 
-            return _aplicConversor.ConverterArquivosCsvParaExcel(arquivosCsv, destino);
+            CriarPlanilhasDeFatura(faturas, destino);
         }
 
-        private async Task<List<FaturaMesAno>> SalvarFaturas(List<Fatura> novasFaturas)
+        private Task<List<FaturaMesAno>> ConverterDados(string destino)
         {
-            return await _aplicFaturaMesAno.InsertAsync(novasFaturas);
+            return _aplicOrquestradorConversor.ConverterDados(destino);
         }
 
-        private async Task CriarPlanilhas(List<FaturaMesAno> faturasMesAno)
+        private void CriarPlanilhasDeFatura(List<FaturaMesAno> faturasMesAno, string destino)
         {
-            //_aplicAgrupadorFaturas.CriarPlanilhaAgrupador(arquivosCsv, faturas);
 
-            //List<Fatura> faturas = await _aplicFatura.InsertAsync(listaConteudos);
-
-            //CriarPlanilhaHistorico(pastaDeDestino, faturas);
-        }
-
-        private List<ConteudoDto> CriarPlanilhaAgrupada(List<string> arquivosCsv, List<Fatura> faturas)
-        {
-            //List<ConteudoDto> listaConteudos = _aplicAgrupadorFaturas.CriarPlanilhaAgrupador(arquivosCsv, faturas);
-            //return listaConteudos;
-
-            return new List<ConteudoDto>();
-        }
-
-        private void CriarPlanilhaHistorico(string destino, List<Fatura> faturas)
-        {
-            ExcelPackage package = new();
-            _aplicPlanilhaHistorico.CriarPlanilhaHistorico(package, faturas);
-            _aplicPlanilhaTotalizador.CriarPlanilhaTotalizador(package, faturas);
-
-            string caminhoExcel = Functions.CriarArquivo(destino, "Histórico de faturas.xlsx");
-            package.SaveAs(new FileInfo(caminhoExcel));
+            _aplicOrquestradorPlanilhas.CriarPlanilhas(faturasMesAno, destino);
         }
     }
 }

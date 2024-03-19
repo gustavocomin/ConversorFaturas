@@ -1,8 +1,8 @@
-﻿using ConversorFaturas.Domain.Faturas.MesAno;
+﻿using Financeiro.Domain.Faturas.MesAno;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ConversorFaturas.Repository.Entities.Faturas.MesAno
+namespace Financeiro.Repository.Entities.Faturas.MesAno
 {
     public class FaturaMesAnoConfig : IEntityTypeConfiguration<FaturaMesAno>
     {

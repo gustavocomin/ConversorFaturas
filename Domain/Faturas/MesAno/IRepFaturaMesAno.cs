@@ -1,6 +1,6 @@
-﻿using ConversorFaturas.Domain.Common;
+﻿using Financeiro.Domain.Common;
 
-namespace ConversorFaturas.Domain.Faturas.MesAno
+namespace Financeiro.Domain.Faturas.MesAno
 {
     public interface IRepFaturaMesAno : IRepBase<FaturaMesAno>
     {

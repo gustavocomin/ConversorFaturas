@@ -1,46 +1,93 @@
 ﻿using System.Globalization;
-using ConversorFaturas.Aplicacao.Dto;
-using ConversorFaturas.Domain.Faturas;
+using Financeiro.Aplicacao.Dto;
+using Financeiro.Domain.Enums;
+using Financeiro.Domain.Faturas;
 using OfficeOpenXml;
 
-namespace ConversorFaturas.Common
+namespace Financeiro.Common
 {
     public static class Functions
     {
         private static int _linhaAtual = 0;
         private static int _codigoColuna = ObterCodigoAsciiLetra('A');
 
-        internal static void CriarCabecalho(ExcelWorksheet worksheet)
+        internal static void CriarDadosPlanilha(ExcelPackage package, string nomeplanilha, List<Fatura> faturas, TipoPlanilha tipoPlanilha)
+        {
+            ExcelWorksheet planilha = CriarPlanilha(package, nomeplanilha);
+            CriarCabecalho(planilha);
+            List<TotalizadorCategoria> totaisPorCategoria = CriarDados(planilha, faturas);
+
+            if (tipoPlanilha == TipoPlanilha.Historico)
+                totaisPorCategoria = MontarCategorias(faturas);
+
+            CriarTotalizador(planilha, MontarCelulaTotalizador());
+            CriarTotalizadoresPorCategoria(totaisPorCategoria, planilha, out int linhaTotalizadores);
+            CriarTotalizadoresCategoria(planilha, linhaTotalizadores);
+            planilha.DefinirComoFiltro();
+
+            if (tipoPlanilha == TipoPlanilha.Historico)
+                CriarTotalizadorParaFiltro(planilha);
+
+            FormatarTotalizador(planilha, new List<int>() { 8, 11 });
+        }
+
+        private static List<TotalizadorDto> MontarCelulaTotalizador()
+        {
+            int codigoColuna = ObterCodigoAsciiLetra('G');
+            int linhaAtual = 1;
+
+            var listaCelulas = new List<TotalizadorDto>
+            {
+                new(
+                new CelulaDto
+                {
+                    Coluna = codigoColuna++,
+                    Linha = linhaAtual,
+                }, new CelulaDto
+                {
+                    Coluna = codigoColuna,
+                    Linha = linhaAtual,
+                }
+            )};
+
+            return listaCelulas;
+        }
+
+        private static List<TotalizadorCategoria> MontarCategorias(List<Fatura> faturas)
+        {
+            var resultado = faturas.GroupBy(x => x.Categoria)
+                                   .Select(x => new TotalizadorCategoria
+                                   {
+                                       Categoria = x.Key,
+                                       Valor = x.Sum(p => p.Valor)
+                                   })
+                                   .OrderByDescending(x => x.Valor)
+                                   .ThenBy(x => x.Categoria)
+                                   .ToList();
+
+            return resultado;
+        }
+
+        internal static void CriarCabecalho(ExcelWorksheet planilha)
         {
             string[] headers = { "Mês", "Ano", "Categoria", "Nome", "Valor" };
             for (int j = 0; j < headers.Length; j++)
             {
-                var celula = worksheet.Cells[1, j + 1];
+                var celula = planilha.Cells[1, j + 1];
                 celula.Value = headers[j];
                 FormatarCelulasDestaque(celula, false, false);
             }
         }
 
-        internal static ExcelWorksheet CriarPlanilha(ExcelPackage package, string nomeDoArquivo, bool tratarNome)
+        internal static ExcelWorksheet CriarPlanilha(ExcelPackage package, string nomeDoArquivo)
         {
-            if (tratarNome)
-                nomeDoArquivo = TratarNomePlanilha(nomeDoArquivo);
-
-            ExcelWorksheet worksheet = package.Workbook.Worksheets.Add(nomeDoArquivo);
-            return worksheet;
-        }
-
-        internal static string TratarNomePlanilha(string nomeDoArquivo)
-        {
-            nomeDoArquivo = nomeDoArquivo.ToUpper().Replace("NUBANK-", "");
-            ConverterData(nomeDoArquivo, out DateTime dataConvertida);
-
-            return dataConvertida.ToString("MM-yyyy");
+            ExcelWorksheet planilha = package.Workbook.Worksheets.Add(nomeDoArquivo);
+            return planilha;
         }
 
         internal static bool ConverterData(string data, out DateTime dataConvertida)
         {
-            string[] formatos = { "yyyy-MM-dd", "dd/MM/yyyy", "yyyyMMdd", "yyyy-MM", "DD/YYYY", "D/YYYY" };
+            string[] formatos = { "yyyy-MM-dd", "dd/MM/yyyy", "yyyyMMdd", "yyyy-MM", "DD/YYYY", "D/YYYY", "MM-yy" };
             return DateTime.TryParseExact(data, formatos, CultureInfo.InvariantCulture, DateTimeStyles.None, out dataConvertida);
         }
 
@@ -99,7 +146,7 @@ namespace ConversorFaturas.Common
 
                 int codigoAscii = letra;
 
-                if ((isMaiuscula && codigoAscii > 'Z') || (!isMaiuscula && codigoAscii > 'z'))
+                if (isMaiuscula && codigoAscii > 'Z' || !isMaiuscula && codigoAscii > 'z')
                 {
                     codigoAscii = isMaiuscula ? 'A' : 'a';
                 }
@@ -108,16 +155,6 @@ namespace ConversorFaturas.Common
             }
 
             return letra;
-        }
-
-        internal static int ObterAnoDaPlanilha(string nomePlanilha)
-        {
-            if (int.TryParse(nomePlanilha.AsSpan(nomePlanilha.Length - 4), out int ano))
-            {
-                return ano;
-            }
-
-            return 0;
         }
 
         internal static string CriarArquivo(string pastaDeDestino, string nomeDoArquivo)
@@ -175,6 +212,20 @@ namespace ConversorFaturas.Common
             linhaTotalizadores = linhaTotalizadoresCopy;
         }
 
+        internal static void CriarTotalizadoresCategoria(ExcelWorksheet planilha, int linhaTotalizadores)
+        {
+            linhaTotalizadores += 1;
+
+            ExcelRange celulaTotalizador = planilha.Cells[linhaTotalizadores, 7];
+            ExcelRange celulaTotal = planilha.Cells[linhaTotalizadores, 8];
+
+            celulaTotalizador.Value = "Total geral";
+            FormatarCelulasDestaque(celulaTotalizador, false, false);
+
+            celulaTotal.Formula = $"SUM(H2:H{linhaTotalizadores - 1})";
+            FormatarCelulasDestaque(celulaTotal, true, false);
+        }
+
         internal static List<TotalizadorCategoria> AtualizarCategoria(List<TotalizadorCategoria> totaisPorCategoria, string categoria, decimal valor)
         {
             if (!string.IsNullOrWhiteSpace(categoria))
@@ -194,7 +245,7 @@ namespace ConversorFaturas.Common
             return totaisPorCategoria;
         }
 
-        internal static List<TotalizadorAno> MontarDadosTotalizadores(List<ConteudoDto> conteudoDtos)
+        internal static List<TotalizadorAno> MontarDadosTotalizadores(List<Fatura> conteudoDtos)
         {
             var resultado = conteudoDtos.GroupBy(x => new { x.Data.Year, x.Categoria })
                                          .Select(grupo => new TotalizadorAno
@@ -263,8 +314,22 @@ namespace ConversorFaturas.Common
         {
             var celulaValor = planilha.Cells[$"{(char) _codigoColuna}{_linhaAtual}"];
             celulaValor.Value = valor;
-            FormatarComoNumero(celulaValor, (valor < 0));
+            FormatarComoNumero(celulaValor, valor < 0);
             _codigoColuna++;
+        }
+
+        private static void CriarTotalizadorParaFiltro(ExcelWorksheet planilha)
+        {
+            int codigoColuna = ObterCodigoAsciiLetra('J');
+            int linhaAtual = 1;
+
+            var filtroDescricao = planilha.Cells[$"{(char) codigoColuna}{linhaAtual}"];
+            filtroDescricao.Value = "Valor total filtrado:";
+            FormatarCelulasDestaque(filtroDescricao, false, false);
+
+            var filtroValor = planilha.Cells[$"{(char) (codigoColuna + 1)}{linhaAtual}"];
+            filtroValor.Formula = "SUBTOTAL(109, E:E)";
+            FormatarCelulasDestaque(filtroValor, true, false);
         }
     }
 }

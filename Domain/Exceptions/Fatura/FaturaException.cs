@@ -1,4 +1,4 @@
-﻿namespace ConversorFaturas.Domain.Exceptions.Fatura
+﻿namespace Financeiro.Domain.Exceptions.Fatura
 {
     public class FaturaException : Exception
     {

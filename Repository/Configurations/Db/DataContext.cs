@@ -1,10 +1,13 @@
 ﻿using System.Reflection;
-using ConversorFaturas.Domain.Faturas;
-using ConversorFaturas.Domain.Faturas.MesAno;
+using Financeiro.Domain.ContasMensais;
+using Financeiro.Domain.Extratos;
+using Financeiro.Domain.Extratos.MesAno;
+using Financeiro.Domain.Faturas;
+using Financeiro.Domain.Faturas.MesAno;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace ConversorFaturas.Repository.Configurations.Db
+namespace Financeiro.Repository.Configurations.Db
 {
     public class DataContext : DbContext
     {
@@ -18,6 +21,9 @@ namespace ConversorFaturas.Repository.Configurations.Db
 
         public DbSet<Fatura> Fatura { get; set; }
         public DbSet<FaturaMesAno> FaturaMesAno { get; set; }
+        public DbSet<ContaMensal> ContaMensal { get; set; }
+        public DbSet<Extrato> Extrato { get; set; }
+        public DbSet<ExtratoMesAno> ExtratoMesAno { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

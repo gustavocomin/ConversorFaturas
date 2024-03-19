@@ -1,7 +1,7 @@
-﻿using ConversorFaturas.Domain.Faturas;
+﻿using Financeiro.Domain.Faturas;
 using OfficeOpenXml;
 
-namespace ConversorFaturas.Aplicacao.Totalizador
+namespace Financeiro.Aplicacao.Planilhas.Totalizador
 {
     public interface IAplicPlanilhaTotalizador
     {

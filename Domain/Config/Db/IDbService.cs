@@ -1,4 +1,4 @@
-﻿namespace ConversorFaturas.Domain.Config.Db
+﻿namespace Financeiro.Domain.Config.Db
 {
     public interface IDbService
     {

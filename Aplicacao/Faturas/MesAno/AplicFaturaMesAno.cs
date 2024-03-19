@@ -1,8 +1,7 @@
-﻿using ConversorFaturas.Domain.Exceptions.Fatura.MesAno;
-using ConversorFaturas.Domain.Faturas;
-using ConversorFaturas.Domain.Faturas.MesAno;
+﻿using Financeiro.Domain.Exceptions.Fatura.MesAno;
+using Financeiro.Domain.Faturas.MesAno;
 
-namespace ConversorFaturas.Aplicacao.Faturas.MesAno
+namespace Financeiro.Aplicacao.Faturas.MesAno
 {
     public class AplicFaturaMesAno : IAplicFaturaMesAno
     {
@@ -13,7 +12,7 @@ namespace ConversorFaturas.Aplicacao.Faturas.MesAno
             _repFaturaMesAno = repFaturaMesAno;
         }
 
-        public async Task<List<FaturaMesAno>> InsertAsync(List<Fatura> novasFaturas)
+        public async Task<List<FaturaMesAno>> InsertAsync(List<FaturaMesAno> novasFaturas)
         {
             try
             {

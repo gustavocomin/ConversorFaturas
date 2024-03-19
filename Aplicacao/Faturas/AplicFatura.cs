@@ -1,7 +1,7 @@
-﻿using ConversorFaturas.Domain.Exceptions.Fatura;
-using ConversorFaturas.Domain.Faturas;
+﻿using Financeiro.Domain.Exceptions.Fatura;
+using Financeiro.Domain.Faturas;
 
-namespace ConversorFaturas.Aplicacao.Faturas
+namespace Financeiro.Aplicacao.Faturas
 {
     public class AplicFatura : IAplicFatura
     {

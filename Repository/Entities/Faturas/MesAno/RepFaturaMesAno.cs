@@ -1,8 +1,8 @@
-﻿using ConversorFaturas.Domain.Faturas.MesAno;
-using ConversorFaturas.Repository.Common;
-using ConversorFaturas.Repository.Configurations.Db;
+﻿using Financeiro.Domain.Faturas.MesAno;
+using Financeiro.Repository.Common;
+using Financeiro.Repository.Configurations.Db;
 
-namespace ConversorFaturas.Repository.Entities.Faturas.MesAno
+namespace Financeiro.Repository.Entities.Faturas.MesAno
 {
     public class RepFaturaMesAno : RepBase<FaturaMesAno>, IRepFaturaMesAno
     {

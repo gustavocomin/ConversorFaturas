@@ -1,8 +1,8 @@
-﻿using ConversorFaturas.Domain.Faturas;
+﻿using Financeiro.Domain.Faturas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ConversorFaturas.Repository.Entities.Faturas
+namespace Financeiro.Repository.Entities.Faturas
 {
     public class FaturaConfig : IEntityTypeConfiguration<Fatura>
     {

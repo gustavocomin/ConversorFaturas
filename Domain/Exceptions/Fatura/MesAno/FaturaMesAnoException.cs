@@ -1,4 +1,4 @@
-﻿namespace ConversorFaturas.Domain.Exceptions.Fatura.MesAno
+﻿namespace Financeiro.Domain.Exceptions.Fatura.MesAno
 {
     public class FaturaMesAnoException : Exception
     {

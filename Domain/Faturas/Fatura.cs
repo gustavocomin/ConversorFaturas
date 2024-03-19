@@ -1,17 +1,14 @@
-﻿using ConversorFaturas.Domain.Common;
-using ConversorFaturas.Domain.Faturas.MesAno;
+﻿using Financeiro.Domain.Common;
+using Financeiro.Domain.Faturas.MesAno;
 
-namespace ConversorFaturas.Domain.Faturas
+namespace Financeiro.Domain.Faturas
 {
-    public class Fatura : Identificador
+    public class Fatura : IdentificadorComposto
     {
-        public DateTime Data { get; set; }
         public string Categoria { get; set; } = "";
-        public string Descricao { get; set; } = "";
-        public decimal Valor { get; set; }
 
         public int CodigoFaturaMesAno { get; set; }
-        public virtual FaturaMesAno FaturaMesAno { get; set; }
+        public virtual FaturaMesAno FaturaMesAno { get; set; } = new FaturaMesAno();
 
         public Fatura()
         {
@@ -30,7 +27,7 @@ namespace ConversorFaturas.Domain.Faturas
             List<Fatura> faturas = new();
             novasFaturas.ForEach(nova =>
             {
-                if (FaturaJaExiste(faturasAtuais, nova))
+                if (!FaturaJaExiste(faturasAtuais, nova))
                     faturas.Add(new Fatura(nova));
             });
 

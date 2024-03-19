@@ -1,12 +1,12 @@
-﻿using ConversorFaturas.Domain.Exceptions.Db;
-using ConversorFaturas.Ioc.Application;
-using ConversorFaturas.Ioc.Repository;
-using ConversorFaturas.Repository.Configurations.Db;
+﻿using Financeiro.Domain.Exceptions.Db;
+using Financeiro.Ioc.Application;
+using Financeiro.Ioc.Repository;
+using Financeiro.Repository.Configurations.Db;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace ConversorFaturas.Ioc
+namespace Financeiro.Ioc
 {
     public static class Services
     {

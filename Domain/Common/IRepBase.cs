@@ -1,4 +1,4 @@
-﻿namespace ConversorFaturas.Domain.Common
+﻿namespace Financeiro.Domain.Common
 {
     public interface IRepBase<T> where T : class
     {

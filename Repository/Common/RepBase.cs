@@ -1,8 +1,8 @@
-﻿using ConversorFaturas.Domain.Common;
-using ConversorFaturas.Repository.Configurations.Db;
+﻿using Financeiro.Domain.Common;
+using Financeiro.Repository.Configurations.Db;
 using Microsoft.EntityFrameworkCore;
 
-namespace ConversorFaturas.Repository.Common
+namespace Financeiro.Repository.Common
 {
     public class RepBase<T> : IRepBase<T> where T : Identificador
     {

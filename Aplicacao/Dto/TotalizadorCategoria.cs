@@ -1,4 +1,4 @@
-﻿namespace ConversorFaturas.Aplicacao.Dto
+﻿namespace Financeiro.Aplicacao.Dto
 {
     public class TotalizadorCategoria
     {

@@ -1,23 +1,23 @@
-﻿using ConversorFaturas.Aplicacao.Dto;
-using ConversorFaturas.Common;
-using ConversorFaturas.Domain.Faturas;
+﻿using Financeiro.Aplicacao.Dto;
+using Financeiro.Common;
+using Financeiro.Domain.Faturas;
 using OfficeOpenXml;
 
-namespace ConversorFaturas.Aplicacao.Totalizador
+namespace Financeiro.Aplicacao.Planilhas.Totalizador
 {
     public class AplicPlanilhaTotalizador : IAplicPlanilhaTotalizador
     {
-        public void CriarPlanilhaTotalizador(ExcelPackage package, List<ConteudoDto> conteudoDtos)
+        public void CriarPlanilhaTotalizador(ExcelPackage package, List<Fatura> faturas)
         {
-            ExcelWorksheet planilha = Functions.CriarPlanilha(package, "Totalizador", false);
-            CriarTotalizadoresPorAno(planilha, conteudoDtos);
+            ExcelWorksheet planilha = Functions.CriarPlanilha(package, "Totalizador");
+            CriarTotalizadoresPorAno(planilha, faturas);
             planilha.Cells.AutoFitColumns();
             package.Save();
         }
 
-        private void CriarTotalizadoresPorAno(ExcelWorksheet planilha, List<ConteudoDto> conteudoDtos)
+        private void CriarTotalizadoresPorAno(ExcelWorksheet planilha, List<Fatura> faturas)
         {
-            List<TotalizadorAno> totalizadorAno = Functions.MontarDadosTotalizadores(conteudoDtos);
+            List<TotalizadorAno> totalizadorAno = Functions.MontarDadosTotalizadores(faturas);
 
             int linhaAtual = 1;
             int ultimoAno = 0;
@@ -40,10 +40,10 @@ namespace ConversorFaturas.Aplicacao.Totalizador
                 if (x.Equals(totalizadorAno[totalizadorAno.Count - 1]))
                     CriarTotalizadorAno(planilha, codigoColunaAtual, linhaAtual + 1, ultimoAno, valorTotal);
 
-                ExcelRange celulaDescricao = planilha.Cells[$"{(char) codigoColunaAtual}{linhaAtual}"];
+                ExcelRange celulaDescricao = planilha.Cells[$"{(char)codigoColunaAtual}{linhaAtual}"];
                 celulaDescricao.Value = $"Total {x.Categoria}";
 
-                ExcelRange celulaValor = planilha.Cells[$"{(char) (codigoColunaAtual + 1)}{linhaAtual}"];
+                ExcelRange celulaValor = planilha.Cells[$"{(char)(codigoColunaAtual + 1)}{linhaAtual}"];
                 celulaValor.Value = x.Valor;
                 Functions.FormatarComoNumero(celulaValor, x.Valor < 0);
 
@@ -55,18 +55,13 @@ namespace ConversorFaturas.Aplicacao.Totalizador
 
         private void CriarTotalizadorAno(ExcelWorksheet planilha, int codigoColunaAtual, int linhaAtual, int ultimoAno, decimal valorTotal)
         {
-            ExcelRange celulaDescricaoTotalizador = planilha.Cells[$"{(char) codigoColunaAtual}{linhaAtual + 1}"];
+            ExcelRange celulaDescricaoTotalizador = planilha.Cells[$"{(char)codigoColunaAtual}{linhaAtual + 1}"];
             celulaDescricaoTotalizador.Value = $"Total {ultimoAno}";
             Functions.FormatarCelulasDestaque(celulaDescricaoTotalizador, false, false);
 
-            ExcelRange celulaValorTotalizador = planilha.Cells[$"{(char) (codigoColunaAtual + 1)}{linhaAtual + 1}"];
+            ExcelRange celulaValorTotalizador = planilha.Cells[$"{(char)(codigoColunaAtual + 1)}{linhaAtual + 1}"];
             celulaValorTotalizador.Value = valorTotal;
             Functions.FormatarCelulasDestaque(celulaValorTotalizador, true, valorTotal < 0);
-        }
-
-        public void CriarPlanilhaTotalizador(ExcelPackage package, List<Fatura> faturas)
-        {
-            throw new NotImplementedException();
         }
     }
 }

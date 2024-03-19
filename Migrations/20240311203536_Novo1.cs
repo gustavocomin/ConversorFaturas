@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace ConversorFaturas.Migrations
+namespace Financeiro.Migrations
 {
     /// <inheritdoc />
     public partial class Novo1 : Migration
