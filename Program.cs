@@ -37,6 +37,14 @@ namespace Financeiro
 
             _aplicConversorFaturas.ConverterArquivosCsvParaFaturas(origem);
             //_aplicConversorExtratos.ConverterArquivosCsvParaExtratos(origem);
+
+
+
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine($"Suas faturas convertidas estão em {Path.Combine(origem, "Convertido")}");
+            Console.WriteLine("Pressione Enter para sair...");
+            Console.ReadLine();
         }
     }
 }
