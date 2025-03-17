@@ -1,9 +1,9 @@
-﻿using Financeiro.Domain.Extratos.MesAno;
+﻿using Financeiro.Domain.Extratos;
 
 namespace Financeiro.Aplicacao.Conversor.Extratos
 {
     public interface IAplicConversorExtratos
     {
-        Task<List<ExtratoMesAno>> ConverterArquivosCsvParaExtratosAsync(string origem);
+        List<Extrato> ConverterArquivosCsvParaExtratos(string origem);
     }
 }

@@ -1,9 +1,9 @@
-﻿using Financeiro.Domain.Faturas.MesAno;
+﻿using Financeiro.Domain.Faturas;
 
 namespace Financeiro.Aplicacao.Conversor.Faturas
 {
     public interface IAplicConversorFaturas
     {
-        Task<List<FaturaMesAno>> ConverterArquivosCsvParaFaturasAsync(string origem);
+        List<Fatura> ConverterArquivosCsvParaFaturas(string origem);
     }
 }
