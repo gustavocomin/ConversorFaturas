@@ -11,7 +11,6 @@ namespace Financeiro.Aplicacao.Conversor.Faturas
     {
         public List<Fatura> ConverterArquivosCsvParaFaturas(string origem)
         {
-            origem = Path.Combine(origem, "Faturas");
             List<Fatura> faturas = [];
             List<string> arquivosCsv = [.. Directory.GetFiles(origem, "*.csv").OrderByDescending(x => x)];
 

@@ -24,7 +24,16 @@ namespace Financeiro
         public void Run()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            string origem = @"E:\PROGRAMACAO\gustavocomin\gustavocomin\ConversorFaturas\Financeiro";
+            Console.WriteLine("Para que a conversão funcione, você deve passar o caminho em que suas faturas estão.");
+            Console.WriteLine("Faturas aceitas até o momento: Inter e Nubank");
+
+            Console.WriteLine("");
+            Console.WriteLine("");
+
+            Console.Write("Digite o caminho da pasta contendo APENAS as faturas em .CSV: ");
+            string origem = Console.ReadLine() ?? "";
+
+            //string origem = @"E:\PROGRAMACAO\gustavocomin\gustavocomin\ConversorFaturas\Financeiro";
 
             _aplicConversorFaturas.ConverterArquivosCsvParaFaturas(origem);
             //_aplicConversorExtratos.ConverterArquivosCsvParaExtratos(origem);
