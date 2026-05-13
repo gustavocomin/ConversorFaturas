@@ -7,6 +7,15 @@
 
 ---
 
+## Engineering Focus
+
+- Financial data normalization
+- Parser architecture
+- Event-driven extensibility
+- Clean Architecture
+- Multi-bank ingestion pipelines
+- AI-ready financial infrastructure
+
 ## What it does
 
 Brazilian banks export statements in incompatible CSV layouts (different
