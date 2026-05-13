@@ -7,6 +7,28 @@
 
 ---
 
+```mermaid
+flowchart LR
+
+    A[CSV Statements] --> B[Parser Dispatcher]
+
+    B --> C[Inter Parser]
+    B --> D[Nubank Parser]
+    B --> E[Itau Parser]
+
+    C --> F[Unified Domain Model]
+    D --> F
+    E --> F
+
+    F --> G[Excel Export]
+    F --> H[CSV Export]
+
+    F --> I[(PostgreSQL)]
+    F --> J[AI Financial Assistant]
+
+    J --> K[OpenAI / LLM Layer]
+````
+
 ## Engineering Focus
 
 - Financial data normalization
@@ -15,6 +37,29 @@
 - Clean Architecture
 - Multi-bank ingestion pipelines
 - AI-ready financial infrastructure
+
+mermaid
+flowchart TB
+
+    Client --> API[ASP.NET Core API]
+
+    API --> APP[Application Layer]
+
+    APP --> DOMAIN[Domain Layer]
+
+    APP --> KAFKA[Kafka Event Bus]
+
+    APP --> REDIS[(Redis Cache)]
+
+    APP --> DB[(PostgreSQL)]
+
+    KAFKA --> WORKERS[Background Workers]
+
+    WORKERS --> DB
+
+    WORKERS --> OPENAI[OpenAI Integration]
+
+    OPENAI --> AI[AI Assistant]
 
 ## What it does
 
